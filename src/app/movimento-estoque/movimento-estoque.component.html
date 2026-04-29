@@ -1,0 +1,170 @@
+<div class="dashboard-container">
+  <div class="content">
+    <div class="container">
+      <h2>Registrar Movimento de Estoque</h2>
+      <form
+        (ngSubmit)="registrarMovimento()"
+        #movForm="ngForm"
+        class="form-movimento"
+      >
+        <div class="select-wrapper">
+          <select
+            [(ngModel)]="novoMovimento.produtoId"
+            name="produtoId"
+            required
+          >
+            <option *ngFor="let produto of produtos" [ngValue]="produto.id">
+              {{ produto.nome }}
+            </option>
+          </select>
+          <span class="fake-placeholder" *ngIf="!novoMovimento.produtoId"
+            >Produto</span
+          >
+        </div>
+
+        <input
+          type="number"
+          [(ngModel)]="novoMovimento.quantidade"
+          name="quantidade"
+          required
+          min="1"
+          placeholder="Quantidade"
+        />
+
+        <div class="select-wrapper">
+          <select
+            [(ngModel)]="novoMovimento.tipoMovimento"
+            name="tipoMovimento"
+            required
+          >
+            <option [ngValue]="null" disabled hidden></option>
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+          </select>
+          <span class="fake-placeholder" *ngIf="!novoMovimento.tipoMovimento"
+            >Tipo de Movimento</span
+          >
+        </div>
+
+        <button type="submit" [disabled]="!movForm.valid">Registrar</button>
+      </form>
+
+      <h2>Consulta de Movimento de Estoque</h2>
+      <table>
+        <thead>
+          <tr>
+            <th (click)="ordenarPor('nomeProduto')">Produto ▲▼</th>
+            <th (click)="ordenarPor('descricao')">Descrição ▲▼</th>
+            <th (click)="ordenarPor('precoUnitario')">Preço Unitário ▲▼</th>
+            <th (click)="ordenarPor('quantidade')">Quantidade ▲▼</th>
+            <th (click)="ordenarPor('precoTotal')">Preço Total ▲▼</th>
+            <th (click)="ordenarPor('tipoMovimento')">Tipo ▲▼</th>
+            <th (click)="ordenarPor('dataMovimento')">Data ▲▼</th>
+          </tr>
+          <tr class="filters">
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.nomeProduto"
+                (input)="aplicarFiltros()"
+                placeholder="Buscar produto..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.descricao"
+                (input)="aplicarFiltros()"
+                placeholder="Buscar descrição..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.precoUnitario"
+                (input)="aplicarFiltros()"
+                placeholder="Preço unitário..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.quantidade"
+                (input)="aplicarFiltros()"
+                placeholder="Qtd..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.precoTotal"
+                (input)="aplicarFiltros()"
+                placeholder="Preço total..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.tipoMovimento"
+                (input)="aplicarFiltros()"
+                placeholder="Tipo..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                [(ngModel)]="filtros.data"
+                (input)="aplicarFiltros()"
+                placeholder="Data..."
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movimento of movimentos">
+            <td>{{ movimento.nomeProduto }}</td>
+            <td>
+              <button
+                class="pagination-button"
+                (click)="abrirDescricao(movimento.descricaoProduto)"
+              >
+                Ver descrição
+              </button>
+            </td>
+            <td>{{ formatarPreco(movimento.precoUnitario) }}</td>
+            <td>{{ movimento.quantidade }}</td>
+            <td>{{ formatarPreco(movimento.precoTotal) }}</td>
+            <td>{{ movimento.tipoMovimento }}</td>
+            <td>{{ movimento.dataMovimento }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button
+          class="pagination-button"
+          (click)="alterarPagina(paginaAtual - 1)"
+          [disabled]="paginaAtual <= 1"
+        >
+          Anterior
+        </button>
+        <button
+          class="pagination-button"
+          (click)="alterarPagina(paginaAtual + 1)"
+          [disabled]="paginaAtual >= totalPaginas"
+        >
+          Próximo
+        </button>
+        <span>Página {{ paginaAtual }} de {{ totalPaginas }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-descricao" *ngIf="descricaoAberta">
+  <div class="modal-conteudo">
+    <h3>Descrição do Produto</h3>
+    <textarea readonly>{{ descricaoSelecionada }}</textarea>
+    <button (click)="fecharDescricao()">Fechar</button>
+  </div>
+</div>

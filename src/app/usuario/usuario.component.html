@@ -1,0 +1,93 @@
+<div class="form-container">
+  <h2>Usuário</h2>
+
+  <!-- Campo Nome -->
+  <div class="form-group" style="position: relative">
+    <label class="label" for="nome">Nome</label>
+    <input
+      type="text"
+      id="nome"
+      class="form-control"
+      [(ngModel)]="nome"
+      (ngModelChange)="buscarPorNome($event)"
+    />
+    <p *ngIf="nomeInvalido" style="color: red">
+      O nome não pode conter números.
+    </p>
+
+    <!-- Lista suspensa -->
+    <div class="search-results" *ngIf="usuariosFiltrados.length > 0">
+      <ul>
+        <li *ngFor="let u of usuariosFiltrados" (click)="selecionarUsuario(u)">
+          {{ u.name }} ({{ u.username }})
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="label" for="email">E-mail</label>
+    <input
+      type="email"
+      id="email"
+      class="form-control"
+      [(ngModel)]="email"
+      (ngModelChange)="validarEmail()"
+    />
+    <p *ngIf="emailInvalido" style="color: red">
+      O e-mail deve conter "&#64;".
+    </p>
+  </div>
+
+  <div class="form-group">
+    <label class="label" for="username">Usuário</label>
+    <input
+      type="text"
+      id="username"
+      class="form-control"
+      [(ngModel)]="username"
+    />
+  </div>
+
+  <div class="form-group">
+    <label class="label" for="senha">Senha</label>
+    <input
+      type="password"
+      id="senha"
+      class="form-control"
+      [(ngModel)]="senha"
+    />
+  </div>
+
+  <button
+    *ngIf="!usuarioSelecionado"
+    (click)="criar()"
+    [disabled]="
+      !nome || !email || !username || !senha || nomeInvalido || emailInvalido
+    "
+  >
+    Cadastrar
+  </button>
+
+  <button
+    *ngIf="usuarioSelecionado"
+    (click)="atualizar(usuarioSelecionado.id)"
+    [disabled]="
+      !nome || !email || !username || !senha || nomeInvalido || emailInvalido
+    "
+  >
+    Atualizar
+  </button>
+
+  <button
+    *ngIf="usuarioSelecionado"
+    (click)="deletar(usuarioSelecionado.id)"
+    style="margin-top: 10px; background-color: red; color: white; width: 100%"
+  >
+    Excluir
+  </button>
+
+  <p *ngIf="mensagem" style="margin-top: 12px; color: #003366">
+    {{ mensagem }}
+  </p>
+</div>
